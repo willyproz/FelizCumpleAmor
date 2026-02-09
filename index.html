@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WiLovCa</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fuentes -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600;800&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+      }
+      .font-love {
+        font-family: "Great Vibes", cursive;
+      }
+      .font-mono-tech {
+        font-family: "Share Tech Mono", monospace;
+      }
+
+      /* Fondo fijo */
+      .bg-romantic {
+        background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+      }
+
+      /* SCROLL CONTAINER */
+      #scroll-container {
+        width: 100%;
+        height: 100%;
+        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+      }
+
+      .stage {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 10;
+      }
+
+      /* Ocultar etapa de vuelo inicialmente */
+      #stage-flight.hidden-stage {
+        display: none;
+      }
+
+      #stage-flight1.hidden-stage {
+        display: none;
+      }
+
+      /* Estilos 3D */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      .transform-style-3d {
+        transform-style: preserve-3d;
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      .rotate-y-180 {
+        transform: rotateY(180deg);
+      }
+
+      /* Animaciones */
+      @keyframes heartbeat {
+        0%,
+        14%,
+        28%,
+        42%,
+        70% {
+          transform: scale(1);
+        }
+        14%,
+        42% {
+          transform: scale(1.1);
+        }
+      }
+      .heart-beat {
+        animation: heartbeat 2s infinite;
+      }
+
+      @keyframes bounce-slow {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        40% {
+          transform: translateX(-50%) translateY(-10px);
+        }
+        60% {
+          transform: translateX(-50%) translateY(-5px);
+        }
+      }
+      #next-stage-btn {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        bottom: 0%;
+        transform: translateX(-50%);
+        z-index: 50;
+        animation: bounce-slow 2s infinite;
+        cursor: pointer;
+        transition: opacity 0.5s;
+      }
+
+      /* --- ESTILOS DE VUELO --- */
+      .map-container {
+        position: relative;
+        width: 100%;
+        max-width: 320px;
+        /* Mantiene la proporción exacta del SVG original (320 de ancho / 480 de alto) */
+        aspect-ratio: 320/430;
+        margin: 0 auto 2rem auto;
+        /* Quitamos bordes/padding que puedan afectar el cálculo interno */
+      }
+
+      .flight-path {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Esto asegura que el SVG se estire exactamente igual que el contenedor */
+      }
+
+      #airplane {
+        position: absolute;
+        /* IMPORTANTE: El avión empieza en 0,0 y lo movemos con porcentajes */
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        z-index: 10;
+        opacity: 0;
+        /* El translate -50% -50% es para que el CENTRO del avión esté en el punto, no la esquina */
+        transform: translate(-50%, -50%);
+        will-change: left, top, transform; /* Optimización de rendimiento */
+      }
+
+      #airplane1 {
+        position: absolute;
+        /* IMPORTANTE: El avión empieza en 0,0 y lo movemos con porcentajes */
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        z-index: 10;
+        opacity: 0;
+        /* El translate -50% -50% es para que el CENTRO del avión esté en el punto, no la esquina */
+        transform: translate(-50%, -50%);
+        will-change: left, top, transform; /* Optimización de rendimiento */
+      }
+
+      .map-dot {
+        width: 16px;
+        height: 16px;
+        background: #e11d48;
+        border: 3px solid white;
+        border-radius: 50%;
+        position: absolute;
+        z-index: 2;
+        box-shadow: 0 4px 6px rgba(225, 29, 72, 0.3);
+        transform: translate(-50%, -50%);
+      }
+      .dot-label {
+        position: absolute;
+        left: 22px;
+        top: -10px;
+        font-weight: 800;
+        color: #be123c;
+        background: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Coordenadas */
+      .loc-ecu {
+        top: 20%;
+        left: 20%;
+      }
+      /* ARG: 72% altura */
+      .loc-arg {
+        top: 72%;
+        left: 70%;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .loc-arg.visible {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      /* Trayectoria SVG */
+      .flight-path {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+      /* La línea visible es punteada */
+      .path-line {
+        fill: none;
+        stroke: #fda4af;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-dasharray: 8 8; /* PUNTADA */
+      }
+      /* La línea de máscara es sólida */
+      .mask-line {
+        fill: none;
+        stroke: white;
+        stroke-width: 6;
+      }
+
+      /* Avión */
+      #airplane {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        color: #be123c;
+        z-index: 3;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transform-origin: center center;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+        transition: opacity 0.5s;
+      }
+      #airplane.flying {
+        opacity: 1;
+      }
+
+      /* Avión */
+      #airplane1 {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        color: #be123c;
+        z-index: 3;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transform-origin: center center;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+        transition: opacity 0.5s;
+      }
+      #airplane1.flying {
+        opacity: 1;
+      }
+
+      /* Boleto */
+      .ticket {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 90%;
+        max-width: 350px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease;
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+        position: relative;
+        min-height: 285px;
+      }
+      .ticket.visible {
+        opacity: 1;
+        transform: translateY(-50px);
+      }
+      .ticket-header {
+        background: #e11d48;
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ticket-body {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        border-bottom: 2px dashed #e5e7eb;
+        position: relative;
+      }
+      .ticket-body::after,
+      .ticket-body::before {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        width: 20px;
+        height: 20px;
+        background: #fff1f2;
+        border-radius: 50%;
+      }
+      .ticket-body::after {
+        left: -10px;
+      }
+      .ticket-body::before {
+        right: -10px;
+      }
+      .ticket-footer {
+        padding: 0rem;
+        background: #fff;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      /* Boleto */
+      .ticket1 {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 90%;
+        max-width: 500px;
+        opacity: 0;
+        transform: translateY(0px);
+        transition: all 0.8s ease;
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+        position: relative;
+        min-height: 285px;
+      }
+      .ticket1.visible {
+        opacity: 1;
+        transform: translateY(-50px);
+      }
+      .ticket1-header {
+        background: #e11d48;
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ticket1-body {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        border-bottom: 2px dashed #e5e7eb;
+        position: relative;
+      }
+      .ticket1-body::after,
+      .ticket1-body::before {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        width: 20px;
+        height: 20px;
+        background: #fff1f2;
+        border-radius: 50%;
+      }
+      .ticket1-body::after {
+        left: -10px;
+      }
+      .ticket1-body::before {
+        right: -10px;
+      }
+      .ticket-footer {
+        padding: 0rem;
+        background: #fff;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      /* --- EFECTO RIPPLE ADAPTADO --- */
+
+      /* Contenedor invisible que centra los efectos en el punto */
+      .ripple-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 0;
+        height: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: -1; /* Detrás de la etiqueta ARG */
+        pointer-events: none;
+      }
+
+      /* Solo se activan cuando el punto es visible */
+      #arg-dot.visible .ripple-wrapper span {
+        display: block;
+      }
+
+      /* Solo se activan cuando el punto es visible */
+      #arg-dot1.visible .ripple-wrapper span {
+        display: block;
+      }
+
+      /* Estilo base de tus spans */
+      .ripple-wrapper span {
+        display: none; /* Oculto al inicio */
+        position: absolute; /* Para que salgan todos del mismo centro */
+        width: 20px; /* Un poco más pequeños para el mapa */
+        height: 20px;
+        border-radius: 50%;
+        /* No usamos margin, usamos absolute center */
+      }
+
+      /* El efecto ::before de tu código */
+      .ripple-wrapper span::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: inherit;
+        border-radius: 50%;
+        z-index: -1;
+        /* Tu animación: */
+        animation: ripple 2s ease-out infinite;
+      }
+
+      /* --- TUS COLORES Y DELAYS (Adaptados a tonos de amor) --- */
+
+      /* Onda 1: Rojo Intenso */
+      .ripple-wrapper span:nth-child(1) {
+        background-color: #be123c; /* Rose-700 */
+      }
+      .ripple-wrapper span:nth-child(1)::before {
+        animation-delay: 0.2s;
+      }
+
+      /* Onda 2: Rosa Fuerte */
+      .ripple-wrapper span:nth-child(2) {
+        background-color: #fb7185; /* Rose-400 */
+        transform: scale(0.9);
+      }
+      .ripple-wrapper span:nth-child(2)::before {
+        animation-delay: 0.4s;
+      }
+
+      /* Onda 3: Rosa Suave */
+      .ripple-wrapper span:nth-child(3) {
+        background-color: #fda4af; /* Rose-300 */
+        transform: scale(0.8);
+      }
+      .ripple-wrapper span:nth-child(3)::before {
+        animation-delay: 0.6s;
+      }
+
+      /* Onda 4: Rosa Pálido */
+      .ripple-wrapper span:nth-child(4) {
+        background-color: #ffe4e6; /* Rose-100 */
+        transform: scale(0.7);
+      }
+      .ripple-wrapper span:nth-child(4)::before {
+        animation-delay: 0.8s;
+      }
+
+      /* Onda 5: Blanco Brillante */
+      .ripple-wrapper span:nth-child(5) {
+        background-color: #ffffff;
+        transform: scale(0.6);
+      }
+      .ripple-wrapper span:nth-child(5)::before {
+        animation-delay: 1s;
+      }
+
+      /* --- TU ANIMACIÓN KEYFRAMES --- */
+      @keyframes ripple {
+        from {
+          opacity: 0.8;
+          transform: scale(0);
+        }
+        to {
+          opacity: 0;
+          transform: scale(
+            5
+          ); /* Aumenté la escala para que se vea más grande */
+        }
+      }
+
+      /* --- FIX PARA FIREFOX (3D FLIP) --- */
+
+      /* 1. Forzar suavizado en las caras de la tarjeta */
+      .card-front,
+      .card-back {
+        -webkit-backface-visibility: hidden;
+        -moz-backface-visibility: hidden; /* Específico Firefox */
+        backface-visibility: hidden;
+
+        /* Este truco evita que Firefox renderice mal los bordes o el texto */
+        transform: translate3d(0, 0, 0);
+        will-change: transform;
+      }
+
+      /* 2. Asegurar que el contenedor mantenga el 3D estricto */
+      .transform-style-3d {
+        -webkit-transform-style: preserve-3d;
+        -moz-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+      }
+
+      /* 3. El TRUCO FINAL: Un píxel transparente */
+      /* A veces Firefox se confunde con el z-index en 3D. 
+   Esto fuerza a la cara trasera a estar realmente "atrás" */
+      .card-back {
+        /* Moverla un píxel hacia atrás en el espacio 3D */
+        transform: rotateY(180deg) translateZ(1px);
+      }
+
+      .card-front {
+        /* Moverla un píxel hacia adelante */
+        transform: translateZ(1px);
+      }
+    </style>
+  </head>
+  <body class="text-rose-900 selection:bg-rose-200">
+    <div class="bg-romantic"></div>
+    <canvas
+      id="heart-canvas"
+      class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
+    ></canvas>
+
+    <audio id="bg-music" loop>
+      <source src="./Christina Perri - A Thousand Years.mp3" type="audio/mp3" />
+    </audio>
+
+    <nav class="fixed top-6 right-6 z-50">
+      <button
+        id="music-toggle"
+        class="bg-white/80 backdrop-blur shadow-lg text-rose-500 w-12 h-12 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 group"
+      >
+        <i data-lucide="music" class="w-5 h-5 group-hover:animate-pulse"></i>
+      </button>
+    </nav>
+
+    <div
+      id="next-stage-btn"
+      style="text-align: -moz-center"
+      class="bg-white/90 backdrop-blur-sm text-rose-500 p-4 rounded-full shadow-xl hover:bg-rose-500 hover:text-white transition-all border border-rose-100 group text-center"
+    >
+      <i data-lucide="chevron-down" class="w-6 h-6"></i>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div id="scroll-container">
+      <!-- 0. PORTADA -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
+        id="stage-0"
+      >
+        <div class="relative mb-8">
+          <div
+            class="absolute inset-0 bg-rose-400 blur-3xl opacity-20 rounded-full animate-pulse"
+          ></div>
+          <i
+            data-lucide="heart"
+            class="w-24 h-24 text-rose-500 fill-rose-500 heart-beat relative z-10"
+          ></i>
+        </div>
+        <h1
+          class="font-love text-6xl md:text-9xl text-rose-600 mb-4 drop-shadow-sm text-center px-4"
+        >
+          Feliz Cumpleaños
+        </h1>
+        <h2
+          class="text-xl md:text-3xl font-light tracking-[0.3em] text-rose-800 uppercase animate-pulse"
+        >
+          & San Valentín
+        </h2>
+        <h3
+          class="text-xl md:text-3xl font-light tracking-[0.3em] text-rose-800 uppercase animate-pulse"
+        >
+          <b>Mi amor</b>
+        </h3>
+      </section>
+
+      <!-- 1. DEDICATORIA -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
+        id="stage-1"
+      >
+        <div
+          class="max-h-[80vh] md:max-h-[75vh] overflow-y-auto bg-white/70 backdrop-blur-md p-10 md:p-14 max-w-12xl rounded-3xl shadow-2xl border border-rose-100 mx-4 text-center transform hover:scale-[1.02] transition-transform duration-700"
+        >
+          <i
+            data-lucide="quote"
+            class="w-8 h-8 text-rose-300 mx-auto mb-4 fill-current opacity-50"
+          ></i>
+          <p
+            class="text-xl md:text-2xl leading-relaxed text-gray-700 italic font-light text-justify"
+          >
+            Hola, mi amor.
+            <br />
+            Hoy, 14 de febrero, el calendario se inclina ante nosotros. No solo
+            celebramos el amor, celebramos tu llegada al mundo, el día en que la
+            vida decidió volverse más hermosa.
+            <br /><br />
+            <span class="font-bold text-rose-600 font-love text-4xl"
+              >Naciste para ser amada, y el universo lo sabía.</span
+            >
+            <br /><br />
+            Por eso mi regalo no es algo que se envuelva ni se guarde: es un
+            momento, un camino, una experiencia que viviremos juntos y que, poco
+            a poco, se revelará. Este año quiero que sientas mi amor en cada
+            gesto, en cada cuidado, porque amarte también es protegerte. No
+            podría soportar que alguien lastime a mi preciosa Cathy. Hoy quiero
+            regalarte recuerdos, sonrisas y promesas cumplidas. Que este día sea
+            tan inolvidable como tú, porque lo mereces todo. Eres mi refugio, mi
+            complicidad diaria, mi alegría constante. Y no hay lugar en el que
+            prefiera estar que a tu lado.
+          </p>
+          <div class="mt-8">
+            <span class="text-xs uppercase tracking-widest text-rose-400"
+              >Para mi amorcito - 2026-02-14</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. REGALOS -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
+        id="stage-2"
+      >
+        <div
+          class="container mx-auto max-w-6xl px-4 flex flex-col h-full justify-center"
+        >
+          <div class="text-center mb-10">
+            <h3 class="font-love text-5xl md:text-6xl text-rose-800 mb-2">
+              Jardín de Sorpresas
+            </h3>
+            <p class="text-rose-400 text-sm uppercase tracking-widest">
+              Toca una flor para verla florecer
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full"
+            id="gift-grid"
+          >
+            <!-- JS Inserted -->
+          </div>
+
+          <div class="mt-8 text-center">
+            <div
+              class="inline-block bg-white px-6 py-2 rounded-full shadow-md text-rose-500 font-semibold text-sm"
+            >
+              <span id="opened-count">0</span> / 4 Sorpresas
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SIMULACIÓN DE VUELO (Oculto inicialmente) -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden hidden-stage"
+        id="stage-flight"
+      >
+        <div class="text-center mb-4 mt-15 relative z-20 pt-20">
+          <h3 class="font-love text-4xl text-rose-600 mb-2">
+            Preparando Despegue...
+          </h3>
+          <p
+            class="text-sm text-gray-500 uppercase tracking-widest"
+            id="flight-status"
+          >
+            Destino: Buenos Aires
+          </p>
+
+          <p
+            class="text-[10px] text-black tracking-widest hidden"
+            id="flight-instucciones-Argentina"
+          >
+            ¡Prepara tu mejor baile! (Termina de sonar la música para continuar)
+          </p>
+        </div>
+
+        <div class="map-container" id="map-container-arg">
+          <svg
+            class="flight-path hidden map-container-arg"
+            viewBox="0 0 320 480"
+            preserveAspectRatio="none"
+          >
+            <!-- Definimos la máscara -->
+            <defs>
+              <mask id="path-mask">
+                <!-- 
+                                Nueva curva suavizada:
+                                Start: 64, 96 (ECU)
+                                Control: 80, 220 (Curva hacia la izquierda/oeste natural)
+                                End: 224, 346 (ARG 72% altura)
+                            -->
+                <path
+                  id="mask-animate-line"
+                  d="M 64 96 Q 80 230 224 346"
+                  class="mask-line"
+                />
+              </mask>
+            </defs>
+
+            <!-- Línea visible (Punteada) que usa la máscara -->
+            <path
+              id="route-curve"
+              d="M 64 96 Q 80 220 224 346"
+              class="path-line"
+              mask="url(#path-mask)"
+            />
+          </svg>
+
+          <div class="map-dot loc-ecu hidden map-container-arg">
+            <span class="dot-label">ECU</span>
+          </div>
+          <!-- ARG oculta inicialmente -->
+          <div class="map-dot loc-arg hidden map-container-arg" id="arg-dot">
+            <span class="dot-label">ARG</span>
+            <div class="ripple-wrapper">
+              <span style="background-color: #74acdf !important"></span>
+              <span style="background-color: #ffffff !important"></span>
+              <span style="background-color: #fcbf45 !important"></span>
+              <span style="background-color: #85340a !important"></span>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- Avión -->
+          <i
+            data-lucide="plane"
+            id="airplane"
+            class="hidden map-container-arg"
+          ></i>
+        </div>
+
+        <!-- Boleto -->
+        <div class="ticket" id="boarding-pass">
+          <div class="ticket-header">
+            <div class="flex items-center gap-2">
+              <i data-lucide="plane" class="w-5 h-5"></i>
+              <span class="font-bold tracking-wider">BOARDING PASS</span>
+            </div>
+            <span class="font-mono-tech">AR-2026</span>
+          </div>
+          <div class="ticket-body">
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Pasajera</p>
+              <p class="font-bold text-lg text-rose-600">Amorcito</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Fecha</p>
+              <p class="font-bold font-black text-gray-800">20 Abr</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Origen</p>
+              <h2 class="text-2xl font-black text-gray-800">ECU</h2>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Destino</p>
+              <h2 class="text-2xl font-black text-rose-600">ARG</h2>
+            </div>
+          </div>
+          <div class="ticket-footer">
+            <p class="font-love text-xl my-2 text-rose-400 text-center">
+              Primer destino: Buenos Aires. El inicio de una vida coleccionando
+              momentos juntos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SIMULACIÓN DE VUELO (Oculto inicialmente) -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden hidden-stage"
+        id="stage-flight1"
+      >
+        <div class="text-center mb-4 mt-15 relative z-20 pt-20">
+          <h3 class="font-love text-4xl text-rose-600 mb-2">
+            Preparando Despegue...
+          </h3>
+          <p
+            class="text-sm text-gray-500 uppercase tracking-widest"
+            id="flight-status1"
+          >
+            Destino: Brasil
+          </p>
+          <p
+            class="text-[10px] text-black tracking-widest hidden"
+            id="flight-instucciones-Brasil"
+          >
+            ¡Prepara la samba! (Termina de sonar la música para continuar)
+          </p>
+        </div>
+
+        <div
+          class="map-container"
+          id="map-container-bra"
+          style="transform: rotate(258deg)"
+        >
+          <svg
+            class="flight-path"
+            viewBox="0 0 320 480"
+            preserveAspectRatio="none"
+          >
+            <!-- Definimos la máscara -->
+            <defs>
+              <mask id="path-mask">
+                <!-- 
+                                Nueva curva suavizada:
+                                Start: 64, 96 (ECU)
+                                Control: 80, 220 (Curva hacia la izquierda/oeste natural)
+                                End: 224, 346 (ARG 72% altura)
+                            -->
+                <path
+                  id="mask-animate-line"
+                  d="M 64 96 Q 80 230 224 346"
+                  class="mask-line"
+                />
+              </mask>
+            </defs>
+
+            <!-- Línea visible (Punteada) que usa la máscara -->
+            <path
+              id="route-curve"
+              d="M 64 96 Q 80 220 224 346"
+              class="path-line"
+              mask="url(#path-mask)"
+            />
+          </svg>
+
+          <div class="map-dot loc-ecu">
+            <span class="dot-label" style="transform: rotate(100deg)">ARG</span>
+          </div>
+          <!-- ARG oculta inicialmente -->
+          <div class="map-dot loc-arg" id="arg-dot1">
+            <span class="dot-label" style="transform: rotate(100deg)">BRA</span>
+            <div class="ripple-wrapper">
+              <span style="background-color: #009c3b !important"></span>
+              <span style="background-color: #ffdf00 !important"></span>
+              <span style="background-color: #002776 !important"></span>
+              <span style="background-color: #ffffff !important"></span>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- Avión -->
+          <i data-lucide="plane" id="airplane1"></i>
+        </div>
+
+        <!-- Boleto -->
+        <div class="ticket1" id="boarding-pass1">
+          <div class="ticket1-header">
+            <div class="flex items-center gap-2">
+              <i data-lucide="plane" class="w-5 h-5"></i>
+              <span class="font-bold tracking-wider">BOARDING PASS</span>
+            </div>
+            <span class="font-mono-tech">BR-2026</span>
+          </div>
+          <div class="ticket1-body">
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Pasajera</p>
+              <p class="font-bold text-lg text-rose-600">Amorcito</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Fecha</p>
+              <p class="font-bold font-black text-gray-800">20 Abr</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Origen</p>
+              <h2 class="text-2xl font-black text-gray-800">ARG</h2>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Destino</p>
+              <h2 class="text-2xl font-black text-rose-600">BRA</h2>
+            </div>
+          </div>
+          <div class="ticket1-footer">
+            <p class="font-love text-xl my-4 text-rose-400 text-center">
+              Próxima parada: ¡Brasil! Listos para perdernos en su alegría y
+              conquistar el mundo juntos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. RECUERDO (FOTO) -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
+        id="stage-3"
+      >
+        <div
+          class="max-w-md w-full bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rotate-2 transform hover:rotate-0 transition-transform duration-700 cursor-pointer group mx-4"
+        >
+          <div class="aspect-[4/5] bg-gray-100 overflow-hidden relative">
+            <img
+              src="./IMG_3650.jpg"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+            />
+            <div
+              class="absolute inset-0 bg-rose-500/10 group-hover:bg-transparent transition-colors"
+            ></div>
+          </div>
+          <div class="pt-8 pb-4 text-center">
+            <p class="font-love text-4xl text-rose-600">Juntos por siempre</p>
+            <div class="w-10 h-0.5 bg-rose-200 mx-auto my-3"></div>
+            <p class="text-xs text-gray-400 uppercase tracking-widest">
+              Siempre listo para tomarle fotos a mi princesa.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. FINAL -->
+      <section
+        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
+        id="stage-4"
+      >
+        <div class="text-center">
+          <h2
+            class="font-love text-7xl md:text-9xl text-rose-600 mb-6 animate-pulse"
+          >
+            ¡Te Amo!
+          </h2>
+          <p class="text-xl text-gray-600 max-w-md mx-auto px-4">
+            Gracias por ser el mejor regalo de mi vida.
+          </p>
+          <button
+            onclick="
+              location.reload();
+              localStorage.setItem('currentStage', 0);
+            "
+            class="mt-12 text-sm text-rose-400 hover:text-rose-600 underline cursor-pointer uppercase tracking-widest"
+          >
+            Volver a empezar
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      if (history.scrollRestoration) {
+        history.scrollRestoration = "manual";
+      }
+
+      // Asegura que al recargar, la ventana suba instantáneamente
+      window.onload = function () {
+        window.scrollTo(0, 0);
+      };
+
+      // --- CONFIGURACIÓN ---
+
+      let esModoArgentina = false;
+      let esModoBrasil = false;
+
+      let currentStage = 0;
+      let totalStages = 6; // Inicialmente 5
+      let flightUnlocked = false;
+
+      // --- DATOS DE LOS REGALOS ---
+      const gifts = [
+        {
+          id: 1,
+          title: "Cena Romántica",
+          desc: "Reserva a las 8:00 PM. Ponte hermosa.",
+          icon: "utensils-crossed",
+        },
+        // Regalo especial ID 2
+        {
+          id: 2,
+          title: "Viaje Internacional [A]",
+          desc: "¡Sorpresa! Prepara las maletas.",
+          icon: "plane",
+          special: true,
+        },
+        {
+          id: 3,
+          title: "Viaje Internacional [B]",
+          desc: "¡Sorpresa! Haz ganado un viajeeee!!!.",
+          icon: "plane",
+          special: true,
+        },
+        {
+          id: 4,
+          title: "Mi Corazón",
+          desc: "Tuyo hoy y siempre. Feliz cumpleaños.",
+          icon: "heart",
+        },
+      ];
+
+      $(document).ready(function () {
+        flightUnlocked = false;
+        $("#scroll-container").css("transform", `translateY(0vh) !important`);
+
+        lucide.createIcons();
+
+        // 1. GENERAR REGALOS
+        const $grid = $("#gift-grid");
+        gifts.forEach((gift, index) => {
+          const html = `
+                    <div  class="gift-item h-32 md:h-64 relative cursor-pointer perspective-1000 group" data-id="${gift.id}" data-special="${gift.special || false}">
+                        <div class="card-inner w-full h-full transition-transform duration-1000 transform-style-3d">
+                            <!-- LADO A -->
+                            <div class="card-front absolute inset-0 bg-white rounded-2xl shadow-lg border border-rose-100 flex flex-col items-center justify-center p-4 backface-hidden z-10">
+                                <div class="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-rose-100 transition-colors">
+                                    <i data-lucide="flower-2" class="w-8 h-8 text-rose-400 group-hover:text-rose-600"></i>
+                                </div>
+                                <h4 class="font-love text-2xl text-rose-400">Flor #${index + 1}</h4>
+                            </div>
+                            <!-- LADO B -->
+                            <div class="card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl shadow-xl flex flex-col items-center justify-center p-4 text-center text-white rotate-y-180 backface-hidden">
+                                <i data-lucide="${gift.icon}" class="w-8 h-8 mb-2 text-rose-100"></i>
+                                <h3 class="font-love text-2xl mb-1">${gift.title}</h3>
+                                <p class="text-xs font-light leading-relaxed">${gift.desc}</p>
+                                ${gift.special ? '<p class="mt-2 text-xs font-bold bg-white/20 px-2 py-1 rounded animate-pulse">¡NUEVA ETAPA!</p>' : ""}
+                            </div>
+                        </div>
+                    </div>
+                `;
+          $grid.append(html);
+        });
+        lucide.createIcons();
+
+        const sonidoA = new Audio("./freesound_community-swing-6045.mp3");
+        const sonidoArgentina = new Audio(
+          "./Por una Cabeza - Carlos Gardel.mp3",
+        );
+        const sonidoBrasil = new Audio(
+          "./Magalenha Sergio Mendes Letra Portugus_ Espaol.mp3",
+        );
+        const sonidoDedicado = new Audio(
+          "./Leo Dan - Pdeme la Luna _ Letra.mp3",
+        );
+        //const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
+        // Interacción Regalos
+        let openedCount = 0;
+        $(".gift-item").click(function () {
+          sonidoA.currentTime = 0; // Reinicia el sonido para que pueda reproducirse rápidamente
+          const $card = $(this);
+          const $inner = $card.find(".card-inner");
+
+          if (!$card.hasClass("opened")) {
+            sonidoA.volume = 0.1;
+            sonidoA.play();
+
+            $card.addClass("opened");
+            $inner.addClass("rotate-y-180");
+            openedCount++;
+            $("#opened-count").text(openedCount);
+            createExplosion(event.clientX, event.clientY);
+
+            // LOGICA ESPECIAL ARGENTINA
+            if ($card.data("special") === true && !flightUnlocked) {
+              unlockFlightStage();
+            }
+          }
+          if (openedCount === gifts.length) {
+            $("#next-stage-btn").fadeIn();
+          }
+        });
+
+        function unlockFlightStage() {
+          flightUnlocked = true;
+          totalStages = 7;
+          $("#stage-flight").removeClass("hidden-stage").css("display", "flex");
+          $("#stage-flight1")
+            .removeClass("hidden-stage")
+            .css("display", "flex");
+        }
+
+        // 2. SISTEMA DE SCROLL
+        $("#next-stage-btn").click(function () {
+          $(this).fadeOut();
+          var centinela = true;
+          localStorage.setItem("currentStage", currentStage);
+
+          if (currentStage < totalStages - 1) {
+            currentStage++;
+
+            $("#scroll-container").css(
+              "transform",
+              `translateY(-${currentStage * 100}vh)`,
+            );
+
+            const currentStageEl = $("#scroll-container")
+              .children()
+              .eq(currentStage);
+            const tiempoDespegue = 4;
+            let animacionIniciada = false;
+
+            if (currentStageEl.attr("id") === "stage-flight") {
+              centinela = false;
+              $("#flight-status").text(`Ultimando detalles...`);
+              sonidoArgentina.play();
+
+              sonidoArgentina.addEventListener("timeupdate", () => {
+                if (
+                  sonidoArgentina.currentTime >= tiempoDespegue &&
+                  !animacionIniciada
+                ) {
+                  setTimeout(
+                    startFlightAnimation(
+                      "airplane",
+                      "flight-status",
+                      "Argentina",
+                    ),
+                    500,
+                  );
+                  $(".map-container-arg").removeClass("hidden");
+                  animacionIniciada = true;
+                }
+              });
+
+              sonidoArgentina.addEventListener("ended", () => {
+                console.log("La música ha terminado, ya puedes continuar.");
+                centinela = true; // Activamos el botón
+                $(this).fadeIn();
+                esModoArgentina = false; // Reiniciamos el modo Argentina para la próxima etapa
+              });
+            }
+            if (currentStageEl.attr("id") === "stage-flight1") {
+              sonidoBrasil.play();
+
+              sonidoBrasil.addEventListener("timeupdate", () => {
+                if (
+                  sonidoBrasil.currentTime >= tiempoDespegue &&
+                  !animacionIniciada
+                ) {
+                  setTimeout(
+                    startFlightAnimation(
+                      "airplane1",
+                      "flight-status1",
+                      "Brasil",
+                    ),
+                    500,
+                  );
+                  $(".map-container-bra").removeClass("hidden");
+                  animacionIniciada = true;
+                }
+              });
+
+              sonidoBrasil.addEventListener("ended", () => {
+                console.log("La música ha terminado, ya puedes continuar.");
+                centinela = true; // Activamos el botón
+                $(this).fadeIn();
+                esModoBrasil = false; // Reiniciamos el modo Brasil para la próxima etapa
+              });
+              setTimeout(
+                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                500,
+              );
+            }
+            tmpVal = 1;
+            if (!flightUnlocked) {
+              tmpVal = 2;
+            }
+
+            if (currentStageEl.attr("id") === "stage-2") {
+              centinela = false;
+              //   $(this).fadeOut();
+            }
+            $(this).css("left", "50%");
+            $(this).css("right", "unset");
+
+            if (currentStageEl.attr("id") === "stage-flight1") {
+              centinela = false;
+              // $(this).fadeOut();
+              $(this).css("right", "0%");
+              $(this).css("left", "unset");
+            }
+            if (currentStageEl.attr("id") === "stage-flight") {
+              centinela = false;
+              //   $(this).fadeOut();
+              $(this).css("right", "0%");
+              $(this).css("left", "unset");
+            }
+
+            if (currentStage === totalStages - tmpVal) {
+              localStorage.clear();
+              //  console.log(currentStageEl.attr("id"));
+              // if (currentStageEl.attr("id") === "stage-4") {
+              $(this).fadeOut();
+              setTimeout(
+                () =>
+                  createExplosion(
+                    window.innerWidth / 2,
+                    window.innerHeight / 2,
+                  ),
+                1000,
+              );
+            }
+
+            if (centinela && !(currentStage === totalStages - tmpVal)) {
+              $(this).fadeIn();
+            }
+          }
+        });
+
+        function startFlightAnimation(avion, status, pais) {
+          // 3. ANIMACIÓN DE VUELO CON ROTACIÓN PRECISA
+          $("#" + status).text(`Volando hacia el destino...`);
+
+          const visiblePath = document.getElementById("route-curve");
+          const maskLine = document.getElementById("mask-animate-line");
+          const plane = document.getElementById(avion);
+          const argDot = document.getElementById("arg-dot"); // Asegúrate de tener esta referencia
+
+          const length = visiblePath.getTotalLength();
+
+          // Configuración inicial
+          maskLine.style.strokeDasharray = length;
+          maskLine.style.strokeDashoffset = length;
+
+          const duration = 4000;
+          let start = null;
+
+          $("#" + avion).addClass("flying");
+
+          // DIMENSIONES ORIGINALES DEL SVG (viewBox="0 0 320 480")
+          // Estas son constantes, no cambian aunque cambie la pantalla
+          const originalWidth = 320;
+          const originalHeight = 480;
+
+          function step(timestamp) {
+            if (!start) start = timestamp;
+            const progress = (timestamp - start) / duration;
+
+            if (progress < 1) {
+              // 1. Animación de la línea
+              maskLine.style.strokeDashoffset = length * (1 - progress);
+
+              // 2. Obtener punto en el sistema de coordenadas del SVG (0-320, 0-480)
+              const point = visiblePath.getPointAtLength(length * progress);
+              const nextPoint = visiblePath.getPointAtLength(
+                length * Math.min(progress + 0.01, 1),
+              );
+
+              // 3. Calcular rotación
+              const angle =
+                (Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) *
+                  180) /
+                Math.PI;
+              const rotation = angle + 45; // Ajuste para el icono del avión
+
+              // 4. MOVIMIENTO POR PORCENTAJES (La Solución)
+              // Convertimos la coordenada X (ej: 160) a porcentaje (ej: 50%)
+              const percentX = (point.x / originalWidth) * 100;
+              const percentY = (point.y / originalHeight) * 100;
+
+              // Aplicamos los porcentajes directamente
+              plane.style.left = `${percentX}%`;
+              plane.style.top = `${percentY}%`;
+
+              // Usamos transform SOLO para centrar el icono y rotarlo
+              plane.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+
+              requestAnimationFrame(step);
+            } else {
+              // --- FINAL ---
+              maskLine.style.strokeDashoffset = 0;
+              const point = visiblePath.getPointAtLength(length);
+
+              // Posición final exacta
+              const percentX = (point.x / originalWidth) * 100;
+              const percentY = (point.y / originalHeight) * 100;
+
+              // Ángulo final
+              const prevPoint = visiblePath.getPointAtLength(length * 0.99);
+              const angle =
+                (Math.atan2(point.y - prevPoint.y, point.x - prevPoint.x) *
+                  180) /
+                Math.PI;
+
+              plane.style.left = `${percentX}%`;
+              plane.style.top = `${percentY}%`;
+              plane.style.transform = `translate(-50%, -50%) rotate(${angle + 45}deg)`;
+
+              $("#" + status).text("¡Llegamos! Bienvenidos a " + pais);
+              $("#flight-instucciones-" + pais).removeClass("hidden");
+              // Revelar llegada
+              if (avion == "airplane") {
+                $("#arg-dot").addClass("visible");
+                $("#arg-dot").addClass("visible radar-active");
+                $("#boarding-pass").addClass("visible");
+                esModoArgentina = true;
+              } else {
+                $("#boarding-pass1").addClass("visible");
+                $("#arg-dot1").addClass("visible");
+                $("#arg-dot1").addClass("visible radar-active");
+              }
+
+              createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+              //$("#next-stage-btn").fadeIn();
+            }
+          }
+          requestAnimationFrame(step);
+        }
+
+        // 4. MÚSICA
+        const audio = document.getElementById("bg-music");
+        let isPlaying = false;
+
+        $("body").one("click", function () {
+          if (!isPlaying) toggleMusic();
+        });
+        $("#music-toggle").click(function (e) {
+          e.stopPropagation();
+          toggleMusic();
+        });
+
+        function toggleMusic() {
+          if (isPlaying) {
+            audio.pause();
+            $("#music-toggle").html(
+              '<i data-lucide="music" class="w-5 h-5"></i>',
+            );
+          } else {
+            audio.volume = 0.08;
+            audio.play().catch((e) => console.log("User interaction needed"));
+            $("#music-toggle").html(
+              '<i data-lucide="pause" class="w-5 h-5"></i>',
+            );
+          }
+          lucide.createIcons();
+          isPlaying = !isPlaying;
+        }
+
+        // 5. CANVAS (Corazones)
+        const canvas = document.getElementById("heart-canvas");
+        const ctx = canvas.getContext("2d");
+        let width,
+          height,
+          hearts = [];
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        function createHeart() {
+          if (esModoArgentina) {
+            // Colores de la bandera: Celeste, Blanco, Dorado
+            const coloresArg = [
+              `rgba(116, 172, 223, ${Math.random() * 0.5 + 0.5})`, // Celeste
+              `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`, // Blanco
+              `rgba(246, 180, 14, ${Math.random() * 0.5 + 0.5})`, // Dorado (Sol)
+            ];
+            color = coloresArg[Math.floor(Math.random() * coloresArg.length)];
+          } else if (esModoArgentina) {
+            const coloresBra = [
+              `rgba(0, 156, 59, ${Math.random() * 0.5 + 0.5})`, // Verde
+              `rgba(255, 223, 0, ${Math.random() * 0.5 + 0.5})`, // Amarillo
+              `rgba(0, 39, 118, ${Math.random() * 0.5 + 0.5})`, // Azul
+              `rgba(255, 255, 255, 0.8)`, // Blanco
+            ];
+            color = coloresBra[Math.floor(Math.random() * coloresBra.length)];
+          } else {
+            color = `rgba(${200 + Math.random() * 55}, ${Math.random() * 50}, ${50 + Math.random() * 100}, ${Math.random() * 0.5 + 0.3})`;
+          }
+
+          return {
+            x: Math.random() * width,
+            y: -50,
+            size: Math.random() * 20 + 10,
+            speed: Math.random() * 2 + 1,
+            color: color,
+            wobble: Math.random() * Math.PI * 2,
+            wobbleSpeed: Math.random() * 0.05 + 0.01,
+          };
+        }
+        for (let i = 0; i < 60; i++)
+          hearts.push({ ...createHeart(), y: Math.random() * height });
+
+        function drawHeartShape(ctx, x, y, size, color) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(0, -size / 4);
+          ctx.bezierCurveTo(size / 2, -size / 2, size, 0, 0, size);
+          ctx.bezierCurveTo(-size, 0, -size / 2, -size / 2, 0, -size / 4);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        function animateHearts() {
+          ctx.clearRect(0, 0, width, height);
+          hearts.forEach((h, i) => {
+            h.y += h.speed;
+            h.wobble += h.wobbleSpeed;
+            let wobbleX = Math.sin(h.wobble) * 20;
+            if (h.y > height + 50) hearts[i] = createHeart();
+            drawHeartShape(ctx, h.x + wobbleX, h.y, h.size, h.color);
+          });
+          requestAnimationFrame(animateHearts);
+        }
+        animateHearts();
+
+        function createExplosion(x, y) {
+          const burstCount = 12;
+          for (let i = 0; i < burstCount; i++) {
+            const el = document.createElement("div");
+            el.classList.add(
+              "fixed",
+              "text-rose-500",
+              "pointer-events-none",
+              "z-50",
+            );
+            el.innerHTML =
+              '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+            el.style.left = x + "px";
+            el.style.top = y + "px";
+            el.style.transform = `translate(-50%, -50%) scale(0)`;
+            el.style.transition = "all 0.8s ease-out";
+            document.body.appendChild(el);
+
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 60 + Math.random() * 80;
+            requestAnimationFrame(() => {
+              el.style.transform = `translate(calc(-50% + ${Math.cos(angle) * dist}px), calc(-50% + ${Math.sin(angle) * dist}px)) scale(1.5)`;
+              el.style.opacity = "0";
+            });
+            setTimeout(() => el.remove(), 800);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
