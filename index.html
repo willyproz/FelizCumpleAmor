@@ -567,7 +567,7 @@
     <nav class="fixed top-6 right-6 z-50">
       <button
         id="music-toggle"
-        class="bg-white/80 backdrop-blur shadow-lg text-rose-500 w-12 h-12 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 group"
+        class="hidden bg-white/80 backdrop-blur shadow-lg text-rose-500 w-12 h-12 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 group"
       >
         <i data-lucide="music" class="w-5 h-5 group-hover:animate-pulse"></i>
       </button>
@@ -664,8 +664,9 @@
       >
         <div
           class="container mx-auto max-w-6xl px-4 flex flex-col h-full justify-center"
+          style="padding-top: 4rem"
         >
-          <div class="text-center mb-10">
+          <div class="text-center mb-5">
             <h3 class="font-love text-5xl md:text-6xl text-rose-800 mb-2">
               Jardín de Sorpresas
             </h3>
@@ -1034,7 +1035,7 @@
         const $grid = $("#gift-grid");
         gifts.forEach((gift, index) => {
           const html = `
-                    <div  class="gift-item h-32 md:h-64 relative cursor-pointer perspective-1000 group" data-id="${gift.id}" data-special="${gift.special || false}">
+                    <div  class="gift-item h-28 md:h-64 relative cursor-pointer perspective-1000 group" data-id="${gift.id}" data-special="${gift.special || false}">
                         <div class="card-inner w-full h-full transition-transform duration-1000 transform-style-3d">
                             <!-- LADO A -->
                             <div class="card-front absolute inset-0 bg-white rounded-2xl shadow-lg border border-rose-100 flex flex-col items-center justify-center p-4 backface-hidden z-10">
@@ -1108,6 +1109,12 @@
         $("#next-stage-btn").click(function () {
           $(this).fadeOut();
           var centinela = true;
+          esModoArgentina = false;
+          esModoBrasil = false;
+
+          pararConEstilo(sonidoArgentina);
+          pararConEstilo(sonidoBrasil);
+
           localStorage.setItem("currentStage", currentStage);
 
           if (currentStage < totalStages - 1) {
@@ -1123,11 +1130,13 @@
               .eq(currentStage);
             const tiempoDespegue = 4;
             let animacionIniciada = false;
+            let animacionIniciadaBra = false;
 
             if (currentStageEl.attr("id") === "stage-flight") {
-              centinela = false;
+              //  centinela = false;
               $("#flight-status").text(`Ultimando detalles...`);
-              sonidoArgentina.play();
+              //sonidoArgentina.play();
+              reproducirConFadeIn(sonidoArgentina);
 
               sonidoArgentina.addEventListener("timeupdate", () => {
                 if (
@@ -1144,48 +1153,53 @@
                   );
                   $(".map-container-arg").removeClass("hidden");
                   animacionIniciada = true;
+                  $(this).fadeIn();
                 }
               });
-
               sonidoArgentina.addEventListener("ended", () => {
                 console.log("La música ha terminado, ya puedes continuar.");
                 centinela = true; // Activamos el botón
                 $(this).fadeIn();
                 esModoArgentina = false; // Reiniciamos el modo Argentina para la próxima etapa
+                animacionIniciada = false;
               });
             }
             if (currentStageEl.attr("id") === "stage-flight1") {
-              sonidoBrasil.play();
+              // centinela = false;
+              //sonidoArgentina.pause();
+              // sonidoBrasil.play();
+              reproducirConFadeIn(sonidoBrasil);
 
               sonidoBrasil.addEventListener("timeupdate", () => {
                 if (
                   sonidoBrasil.currentTime >= tiempoDespegue &&
-                  !animacionIniciada
+                  !animacionIniciadaBra
                 ) {
-                  setTimeout(
-                    startFlightAnimation(
-                      "airplane1",
-                      "flight-status1",
-                      "Brasil",
-                    ),
-                    500,
-                  );
-                  $(".map-container-bra").removeClass("hidden");
-                  animacionIniciada = true;
+                  $(this).fadeIn();
+                  animacionIniciadaBra = true;
                 }
               });
+
+              setTimeout(
+                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                500,
+              );
+              $(".map-container-bra").removeClass("hidden");
+              animacionIniciadaBra = true;
 
               sonidoBrasil.addEventListener("ended", () => {
                 console.log("La música ha terminado, ya puedes continuar.");
                 centinela = true; // Activamos el botón
                 $(this).fadeIn();
                 esModoBrasil = false; // Reiniciamos el modo Brasil para la próxima etapa
+                animacionIniciadaBra = false;
               });
               setTimeout(
                 startFlightAnimation("airplane1", "flight-status1", "Brasil"),
                 500,
               );
             }
+            $(this).fadeIn();
             tmpVal = 1;
             if (!flightUnlocked) {
               tmpVal = 2;
@@ -1319,10 +1333,13 @@
                 $("#arg-dot").addClass("visible radar-active");
                 $("#boarding-pass").addClass("visible");
                 esModoArgentina = true;
+                esModoBrasil = false;
               } else {
                 $("#boarding-pass1").addClass("visible");
                 $("#arg-dot1").addClass("visible");
                 $("#arg-dot1").addClass("visible radar-active");
+                esModoBrasil = true;
+                esModoArgentina = false;
               }
 
               createExplosion(window.innerWidth / 2, window.innerHeight / 2);
@@ -1384,12 +1401,11 @@
               `rgba(246, 180, 14, ${Math.random() * 0.5 + 0.5})`, // Dorado (Sol)
             ];
             color = coloresArg[Math.floor(Math.random() * coloresArg.length)];
-          } else if (esModoArgentina) {
+          } else if (esModoBrasil) {
             const coloresBra = [
               `rgba(0, 156, 59, ${Math.random() * 0.5 + 0.5})`, // Verde
               `rgba(255, 223, 0, ${Math.random() * 0.5 + 0.5})`, // Amarillo
               `rgba(0, 39, 118, ${Math.random() * 0.5 + 0.5})`, // Azul
-              `rgba(255, 255, 255, 0.8)`, // Blanco
             ];
             color = coloresBra[Math.floor(Math.random() * coloresBra.length)];
           } else {
@@ -1406,7 +1422,7 @@
             wobbleSpeed: Math.random() * 0.05 + 0.01,
           };
         }
-        for (let i = 0; i < 60; i++)
+        for (let i = 0; i < 30; i++)
           hearts.push({ ...createHeart(), y: Math.random() * height });
 
         function drawHeartShape(ctx, x, y, size, color) {
@@ -1459,6 +1475,43 @@
               el.style.opacity = "0";
             });
             setTimeout(() => el.remove(), 800);
+          }
+        }
+
+        function pararConEstilo(sound) {
+          // En JS no existe .isPlaying, se usa !sound.paused
+          if (sound && !sound.paused) {
+            let intervaloFade = setInterval(() => {
+              if (sound.volume > 0.1) {
+                sound.volume -= 0.1;
+              } else {
+                clearInterval(intervaloFade);
+                sound.pause();
+                sound.currentTime = 0;
+                sound.volume = 1; // Lo dejamos listo para la próxima vez
+              }
+            }, 100);
+          } else if (sound) {
+            // Si ya estaba pausado, solo reseteamos el tiempo
+            sound.currentTime = 0;
+          }
+        }
+
+        function reproducirConFadeIn(sound, volMaximo = 1) {
+          if (sound) {
+            sound.volume = 0; // Empezamos desde silencio absoluto
+            sound.currentTime = 0; // Reiniciamos al segundo 0
+            sound.play();
+
+            let intervaloFade = setInterval(() => {
+              if (sound.volume < volMaximo) {
+                // Incrementamos de 0.05 en 0.05 cada 100ms
+                // Usamos Math.min para no pasarnos del máximo
+                sound.volume = Math.min(volMaximo, sound.volume + 0.05);
+              } else {
+                clearInterval(intervaloFade); // Una vez llega al máximo, paramos el intervalo
+              }
+            }, 150); // Controla la velocidad de la subida (150ms es suave)
           }
         }
       });
