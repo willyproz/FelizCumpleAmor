@@ -208,6 +208,11 @@
       /* Coordenadas */
       .loc-ecu {
         top: 20%;
+        left: 23%;
+      }
+      /* Coordenadas */
+      .loc-ecu2 {
+        top: 20%;
         left: 20%;
       }
       /* ARG: 72% altura */
@@ -352,7 +357,7 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         width: 90%;
-        max-width: 500px;
+        max-width: 350px;
         opacity: 0;
         transform: translateY(0px);
         transition: all 0.8s ease;
@@ -551,6 +556,43 @@
         /* Moverla un píxel hacia adelante */
         transform: translateZ(1px);
       }
+
+      .contenedorArg {
+        position: relative; /* Necesario para posicionar el fondo */
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .contenedorArg::before {
+        content: "";
+        background-image: url("./Gemini_Generated_Image_f87pyf87pyf87pyf.png");
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.2; /* Aquí controlas la opacidad */
+        z-index: -1; /* Lo manda detrás del contenido */
+      }
+
+      .contenedorBra {
+        position: relative; /* Necesario para posicionar el fondo */
+        width: 100%;
+        overflow: hidden;
+      }
+      .contenedorBra::before {
+        content: "";
+        background-image: url("./Gemini_Generated_Image_ui3wo7ui3wo7ui3w.png");
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.2; /* Aquí controlas la opacidad */
+        z-index: -1; /* Lo manda detrás del contenido */
+      }
     </style>
   </head>
   <body class="text-rose-900 selection:bg-rose-200">
@@ -681,7 +723,7 @@
             <!-- JS Inserted -->
           </div>
 
-          <div class="mt-8 text-center ">
+          <div class="mt-8 text-center">
             <div
               class="inline-block bg-white px-6 py-2 rounded-full shadow-md text-rose-500 font-semibold text-sm"
             >
@@ -693,43 +735,33 @@
 
       <!-- 3. SIMULACIÓN DE VUELO (Oculto inicialmente) -->
       <section
-        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden hidden-stage"
+        class="contenedorArg min-h-screen w-full flex flex-col justify-start items-center py-4 stage relative overflow-hidden hidden-stage"
         id="stage-flight"
       >
-        <div class="text-center mb-4 mt-15 relative z-20 pt-20">
-          <h3 class="font-love text-4xl text-rose-600 mb-2">
+        <div class="text-center mb-2 mt-10 relative z-20">
+          <h3 class="font-love text-4xl text-sky-600 mb-1">
             Preparando Despegue...
           </h3>
           <p
-            class="text-sm text-gray-500 uppercase tracking-widest"
+            class="text-sm text-sky-800 uppercase tracking-widest font-mono-tech"
             id="flight-status"
           >
             Destino: Buenos Aires
           </p>
-
-          <p
-            class="text-[10px] text-black tracking-widest hidden"
-            id="flight-instucciones-Argentina"
-          >
-            ¡Prepara tu mejor baile! (Termina de sonar la música para continuar)
-          </p>
         </div>
 
-        <div class="map-container" id="map-container-arg">
+        <div
+          class="map-container my-auto"
+          id="map-container-arg"
+          style="margin-top: -50px; margin-bottom: -20px"
+        >
           <svg
             class="flight-path hidden map-container-arg"
             viewBox="0 0 320 480"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMidYMid meet"
           >
-            <!-- Definimos la máscara -->
             <defs>
               <mask id="path-mask">
-                <!-- 
-                                Nueva curva suavizada:
-                                Start: 64, 96 (ECU)
-                                Control: 80, 220 (Curva hacia la izquierda/oeste natural)
-                                End: 224, 346 (ARG 72% altura)
-                            -->
                 <path
                   id="mask-animate-line"
                   d="M 64 96 Q 80 230 224 346"
@@ -737,8 +769,6 @@
                 />
               </mask>
             </defs>
-
-            <!-- Línea visible (Punteada) que usa la máscara -->
             <path
               id="route-curve"
               d="M 64 96 Q 80 220 224 346"
@@ -750,7 +780,7 @@
           <div class="map-dot loc-ecu hidden map-container-arg">
             <span class="dot-label">ECU</span>
           </div>
-          <!-- ARG oculta inicialmente -->
+
           <div class="map-dot loc-arg hidden map-container-arg" id="arg-dot">
             <span class="dot-label">ARG</span>
             <div class="ripple-wrapper">
@@ -762,7 +792,6 @@
             </div>
           </div>
 
-          <!-- Avión -->
           <i
             data-lucide="plane"
             id="airplane"
@@ -770,9 +799,8 @@
           ></i>
         </div>
 
-        <!-- Boleto -->
-        <div class="ticket" id="boarding-pass">
-          <div class="ticket-header">
+        <div class="ticket mt-auto mb-6" id="boarding-pass">
+          <div class="ticket-header" style="background-color: #0ea5e9">
             <div class="flex items-center gap-2">
               <i data-lucide="plane" class="w-5 h-5"></i>
               <span class="font-bold tracking-wider">BOARDING PASS</span>
@@ -782,11 +810,11 @@
           <div class="ticket-body">
             <div>
               <p class="text-xs text-gray-400 uppercase">Pasajera</p>
-              <p class="font-bold text-lg text-rose-600">Amorcito</p>
+              <p class="font-bold text-lg text-sky-600">Amorcito</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Fecha</p>
-              <p class="font-bold font-black text-gray-800">20 Abr</p>
+              <p class="font-bold font-black text-gray-800">---Definir---</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Origen</p>
@@ -794,11 +822,13 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Destino</p>
-              <h2 class="text-2xl font-black text-rose-600">ARG</h2>
+              <h2 class="text-2xl font-black text-sky-600">ARG</h2>
             </div>
           </div>
           <div class="ticket-footer">
-            <p class="font-love text-xl my-2 text-rose-400 text-center">
+            <p
+              class="font-mono-tech text-md my-2 text-sky-600 text-center px-4"
+            >
               Primer destino: Buenos Aires. El inicio de una vida coleccionando
               momentos juntos.
             </p>
@@ -808,31 +838,29 @@
 
       <!-- 3. SIMULACIÓN DE VUELO (Oculto inicialmente) -->
       <section
-        class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden hidden-stage"
+        class="contenedorBra min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden hidden-stage"
         id="stage-flight1"
       >
         <div class="text-center mb-4 mt-15 relative z-20 pt-20">
-          <h3 class="font-love text-4xl text-rose-600 mb-2">
+          <h3 class="font-love text-4xl text-green-600 mb-2">
             Preparando Despegue...
           </h3>
           <p
-            class="text-sm text-gray-500 uppercase tracking-widest"
+            class="text-sm text-green-800 uppercase tracking-widest font-mono-tech"
             id="flight-status1"
           >
             Destino: Brasil
-          </p>
-          <p
-            class="text-[10px] text-black tracking-widest hidden"
-            id="flight-instucciones-Brasil"
-          >
-            ¡Prepara la samba! (Termina de sonar la música para continuar)
           </p>
         </div>
 
         <div
           class="map-container"
           id="map-container-bra"
-          style="transform: rotate(258deg)"
+          style="
+            transform: rotate(258deg);
+            margin-top: -50px;
+            margin-bottom: -20px;
+          "
         >
           <svg
             class="flight-path"
@@ -865,7 +893,7 @@
             />
           </svg>
 
-          <div class="map-dot loc-ecu">
+          <div class="map-dot loc-ecu2">
             <span class="dot-label" style="transform: rotate(100deg)">ARG</span>
           </div>
           <!-- ARG oculta inicialmente -->
@@ -885,8 +913,8 @@
         </div>
 
         <!-- Boleto -->
-        <div class="ticket1" id="boarding-pass1">
-          <div class="ticket1-header">
+        <div class="ticket1 mt-auto mb-6" id="boarding-pass1">
+          <div class="ticket1-header" style="background-color: #16a34a">
             <div class="flex items-center gap-2">
               <i data-lucide="plane" class="w-5 h-5"></i>
               <span class="font-bold tracking-wider">BOARDING PASS</span>
@@ -896,11 +924,11 @@
           <div class="ticket1-body">
             <div>
               <p class="text-xs text-gray-400 uppercase">Pasajera</p>
-              <p class="font-bold text-lg text-rose-600">Amorcito</p>
+              <p class="font-bold text-lg text-green-600">Amorcito</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Fecha</p>
-              <p class="font-bold font-black text-gray-800">20 Abr</p>
+              <p class="font-bold font-black text-gray-800">---Definir---</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Origen</p>
@@ -908,13 +936,12 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Destino</p>
-              <h2 class="text-2xl font-black text-rose-600">BRA</h2>
+              <h2 class="text-2xl font-black text-green-600">BRA</h2>
             </div>
           </div>
           <div class="ticket1-footer">
-            <p class="font-love text-xl my-4 text-rose-400 text-center">
-              Próxima parada: ¡Brasil! Listos para perdernos en su alegría y
-              conquistar el mundo juntos.
+            <p class="font-mono-tech text-md my-4 text-green-600 text-center">
+              Próxima parada: ¡Brasil! Listos para perdernos en su alegría.
             </p>
           </div>
         </div>
@@ -942,6 +969,7 @@
             <div class="w-10 h-0.5 bg-rose-200 mx-auto my-3"></div>
             <p class="text-xs text-gray-400 uppercase tracking-widest">
               Siempre listo para tomarle fotos a mi princesa.
+              Cierre los ojos y escuche esta melodía especial para usted.
             </p>
           </div>
         </div>
@@ -1170,10 +1198,7 @@
               reproducirConFadeIn(sonidoBrasil);
 
               sonidoBrasil.addEventListener("timeupdate", () => {
-                if (
-                  sonidoBrasil.currentTime >= tiempoDespegue &&
-                  !animacionIniciadaBra
-                ) {
+                if (sonidoBrasil.currentTime >= tiempoDespegue) {
                   $(this).fadeIn();
                   animacionIniciadaBra = true;
                 }
@@ -1206,6 +1231,11 @@
 
             if (currentStageEl.attr("id") === "stage-2") {
               centinela = false;
+              //   $(this).fadeOut();
+            }
+            if (currentStageEl.attr("id") === "stage-3") {
+              centinela = false;
+              sonidoDedicado.play();
               //   $(this).fadeOut();
             }
             $(this).css("left", "50%");
