@@ -602,10 +602,6 @@
       class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
     ></canvas>
 
-    <audio id="bg-music" loop>
-      <source src="./Christina Perri - A Thousand Years.mp3" type="audio/mp3" />
-    </audio>
-
     <nav class="fixed top-6 right-6 z-50">
       <button
         id="music-toggle"
@@ -617,7 +613,7 @@
 
     <div
       id="next-stage-btn"
-      style="text-align: -moz-center"
+      style="text-align: -moz-center; display: none"
       class="bg-white/90 backdrop-blur-sm text-rose-500 p-4 rounded-full shadow-xl hover:bg-rose-500 hover:text-white transition-all border border-rose-100 group text-center"
     >
       <i data-lucide="chevron-down" class="w-6 h-6"></i>
@@ -674,22 +670,21 @@
             Hola, mi amor.
             <br />
             Hoy, 14 de febrero, el calendario se inclina ante nosotros. No solo
-            celebramos el amor, celebramos tu llegada al mundo, el día en que la
+            celebramos el amor, celebramos su llegada al mundo, el día en que la
             vida decidió volverse más hermosa.
             <br /><br />
             <span class="font-bold text-rose-600 font-love text-4xl"
-              >Naciste para ser amada, y el universo lo sabía.</span
+              >Nacio para ser amada, y el universo lo sabía.</span
             >
             <br /><br />
             Por eso mi regalo no es algo que se envuelva ni se guarde: es un
             momento, un camino, una experiencia que viviremos juntos y que, poco
-            a poco, se revelará. Este año quiero que sientas mi amor en cada
-            gesto, en cada cuidado, porque amarte también es protegerte. No
-            podría soportar que alguien lastime a mi preciosa Cathy. Hoy quiero
-            regalarte recuerdos, sonrisas y promesas cumplidas. Que este día sea
-            tan inolvidable como tú, porque lo mereces todo. Eres mi refugio, mi
-            complicidad diaria, mi alegría constante. Y no hay lugar en el que
-            prefiera estar que a tu lado.
+            a poco, se revelará. Este año quiero que sienta mi amor en cada
+            gesto, en cada cuidado, porque amarla también es protegerla. Hoy
+            quiero regalarle recuerdos, sonrisas y promesas cumplidas. Que este
+            día sea tan inolvidable como usted, porque se merece todo. Es mi
+            refugio, mi complicidad diaria, mi alegría constante. Y no hay lugar
+            en el que prefiera estar que a su lado.
           </p>
           <div class="mt-8">
             <span class="text-xs uppercase tracking-widest text-rose-400"
@@ -814,7 +809,7 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Fecha</p>
-              <p class="font-bold font-black text-gray-800">---Definir---</p>
+              <p class="font-bold font-black text-gray-800">16 Abr</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Origen</p>
@@ -928,7 +923,7 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Fecha</p>
-              <p class="font-bold font-black text-gray-800">---Definir---</p>
+              <p class="font-bold font-black text-gray-800">23 Abr</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Origen</p>
@@ -968,8 +963,8 @@
             <p class="font-love text-4xl text-rose-600">Juntos por siempre</p>
             <div class="w-10 h-0.5 bg-rose-200 mx-auto my-3"></div>
             <p class="text-xs text-gray-400 uppercase tracking-widest">
-              Siempre listo para tomarle fotos a mi princesa.
-              Cierre los ojos y escuche esta melodía especial para usted.
+              Siempre listo para tomarle fotos a mi princesa. Cierre los ojos y
+              escuche esta melodía especial para usted.
             </p>
           </div>
         </div>
@@ -1006,7 +1001,6 @@
       if (history.scrollRestoration) {
         history.scrollRestoration = "manual";
       }
-
       // Asegura que al recargar, la ventana suba instantáneamente
       window.onload = function () {
         window.scrollTo(0, 0);
@@ -1026,7 +1020,7 @@
         {
           id: 1,
           title: "Cena Romántica",
-          desc: "Reserva a las 8:00 PM. Ponte hermosa.",
+          desc: "Reserva a las 9:00 PM. Pongase hermosa.",
           icon: "utensils-crossed",
         },
         // Regalo especial ID 2
@@ -1084,6 +1078,25 @@
           $grid.append(html);
         });
         lucide.createIcons();
+        const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
+        sonidoBg.muted = true;
+        sonidoBg.play();
+        sonidoBg.volume = 0.1;
+        const sonidoAudioSeccion1 = new Audio(
+          "./AudioVozSeccion1-enhanced-v2.wav",
+        );
+
+        const sonidoAudioSeccion2 = new Audio(
+          "./AudioVozSeccion2-enhanced-v2.wav",
+        );
+
+        const sonidoAudioSeccion3 = new Audio(
+          "./AudioVozSeccion3-enhanced-v2.wav",
+        );
+
+        const sonidoAudioSeccionFinal = new Audio(
+          "./AudioVozSeccionFinal-enhanced-v2.wav",
+        );
 
         const sonidoA = new Audio("./freesound_community-swing-6045.mp3");
         const sonidoArgentina = new Audio(
@@ -1095,6 +1108,19 @@
         const sonidoDedicado = new Audio(
           "./Leo Dan - Pdeme la Luna _ Letra.mp3",
         );
+
+        sonidoAudioSeccion1.volume = 0.4;
+        sonidoAudioSeccion2.volume = 0.4;
+        sonidoAudioSeccion3.volume = 0.4;
+        sonidoAudioSeccionFinal.volume = 0.4;
+        //  sonidoAudioSeccion1.volume = 0.4;
+        //  sonidoAudioSeccion1.volume = 0.4;
+        sonidoAudioSeccion1.play();
+
+        sonidoAudioSeccion1.addEventListener("ended", () => {
+          $("#next-stage-btn").fadeIn();
+        });
+
         //const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
         // Interacción Regalos
         let openedCount = 0;
@@ -1134,6 +1160,7 @@
 
         // 2. SISTEMA DE SCROLL
         $("#next-stage-btn").click(function () {
+          reproducirConFadeIn(sonidoBg, 0.1);
           $(this).fadeOut();
           var centinela = true;
           esModoArgentina = false;
@@ -1160,6 +1187,7 @@
             let animacionIniciadaBra = false;
 
             if (currentStageEl.attr("id") === "stage-flight") {
+              pararConEstilo(sonidoBg);
               //  centinela = false;
               $("#flight-status").text(`Ultimando detalles...`);
               //sonidoArgentina.play();
@@ -1189,9 +1217,11 @@
                 $(this).fadeIn();
                 esModoArgentina = false; // Reiniciamos el modo Argentina para la próxima etapa
                 animacionIniciada = false;
+                reproducirConFadeIn(sonidoBg, 0.1);
               });
             }
             if (currentStageEl.attr("id") === "stage-flight1") {
+              pararConEstilo(sonidoBg);
               // centinela = false;
               //sonidoArgentina.pause();
               // sonidoBrasil.play();
@@ -1217,6 +1247,7 @@
                 $(this).fadeIn();
                 esModoBrasil = false; // Reiniciamos el modo Brasil para la próxima etapa
                 animacionIniciadaBra = false;
+                reproducirConFadeIn(sonidoBg, 0.1);
               });
               setTimeout(
                 startFlightAnimation("airplane1", "flight-status1", "Brasil"),
@@ -1229,14 +1260,38 @@
               tmpVal = 2;
             }
 
+            if (currentStageEl.attr("id") === "stage-1") {
+              centinela = false;
+              sonidoAudioSeccion2.play();
+              sonidoAudioSeccion2.addEventListener("ended", () => {
+                $(this).fadeIn();
+              });
+              $(this).fadeOut();
+            }
+
             if (currentStageEl.attr("id") === "stage-2") {
               centinela = false;
-              //   $(this).fadeOut();
+              sonidoAudioSeccion3.play();
+              sonidoAudioSeccion3.addEventListener("ended", () => {
+                // $(this).fadeIn();
+              });
+              $(this).fadeOut();
             }
             if (currentStageEl.attr("id") === "stage-3") {
+              $(this).fadeOut();
+              if (sonidoBg.paused) {
+                reproducirConFadeIn(sonidoBg, 0.1);
+              }
+
+              sonidoAudioSeccionFinal.play();
+              sonidoAudioSeccionFinal.addEventListener("ended", () => {
+                sonidoDedicado.play();
+                sonidoDedicado.addEventListener("ended", () => {
+                  $(this).fadeIn();
+                });
+              });
+
               centinela = false;
-              sonidoDedicado.play();
-              //   $(this).fadeOut();
             }
             $(this).css("left", "50%");
             $(this).css("right", "unset");
@@ -1379,33 +1434,10 @@
         }
 
         // 4. MÚSICA
-        const audio = document.getElementById("bg-music");
+        //const audio = document.getElementById("bg-music");
         let isPlaying = false;
 
-        $("body").one("click", function () {
-          if (!isPlaying) toggleMusic();
-        });
-        $("#music-toggle").click(function (e) {
-          e.stopPropagation();
-          toggleMusic();
-        });
-
-        function toggleMusic() {
-          if (isPlaying) {
-            audio.pause();
-            $("#music-toggle").html(
-              '<i data-lucide="music" class="w-5 h-5"></i>',
-            );
-          } else {
-            audio.volume = 0.08;
-            audio.play().catch((e) => console.log("User interaction needed"));
-            $("#music-toggle").html(
-              '<i data-lucide="pause" class="w-5 h-5"></i>',
-            );
-          }
-          lucide.createIcons();
-          isPlaying = !isPlaying;
-        }
+        $("body").one("click", function () {});
 
         // 5. CANVAS (Corazones)
         const canvas = document.getElementById("heart-canvas");
@@ -1527,7 +1559,7 @@
         }
 
         function reproducirConFadeIn(sound, volMaximo = 1) {
-          if (sound) {
+          if (sound && sound.paused) {
             sound.volume = 0; // Empezamos desde silencio absoluto
             sound.currentTime = 0; // Reiniciamos al segundo 0
             sound.play();
