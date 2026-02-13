@@ -593,6 +593,19 @@
         opacity: 0.2; /* Aquí controlas la opacidad */
         z-index: -1; /* Lo manda detrás del contenido */
       }
+
+      .cursor::after {
+        content: "|";
+        animation: blink 1s step-start infinite;
+        color: #e11d48;
+        font-weight: bold;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
     </style>
   </head>
   <body class="text-rose-900 selection:bg-rose-200">
@@ -650,6 +663,13 @@
         >
           <b>Mi amor</b>
         </h3>
+        <br />
+        <button
+          id="iniciarExperiencia"
+          class="bg-white/80 backdrop-blur shadow-lg font-light tracking-[0.1em] text-rose-800 uppercase w-64 h-12 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300"
+        >
+          Toque para empezar
+        </button>
       </section>
 
       <!-- 1. DEDICATORIA -->
@@ -665,6 +685,7 @@
             class="w-8 h-8 text-rose-300 mx-auto mb-4 fill-current opacity-50"
           ></i>
           <p
+            id="typewriter-text"
             class="text-xl md:text-2xl leading-relaxed text-gray-700 italic font-light text-justify"
           >
             Hola, mi amor.
@@ -1045,6 +1066,29 @@
           icon: "heart",
         },
       ];
+      const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
+      const sonidoAudioSeccion1 = new Audio(
+        "./AudioVozSeccion1-enhanced-v2.wav",
+      );
+
+      const sonidoAudioSeccion2 = new Audio(
+        "./AudioVozSeccion2-enhanced-v2.wav",
+      );
+
+      const sonidoAudioSeccion3 = new Audio(
+        "./AudioVozSeccion3-enhanced-v2.wav",
+      );
+
+      const sonidoAudioSeccionFinal = new Audio(
+        "./AudioVozSeccionFinal-enhanced-v2.wav",
+      );
+
+      const sonidoA = new Audio("./freesound_community-swing-6045.mp3");
+      const sonidoArgentina = new Audio("./Por una Cabeza - Carlos Gardel.mp3");
+      const sonidoBrasil = new Audio(
+        "./Magalenha Sergio Mendes Letra Portugus_ Espaol.mp3",
+      );
+      const sonidoDedicado = new Audio("./Leo Dan - Pdeme la Luna _ Letra.mp3");
 
       $(document).ready(function () {
         flightUnlocked = false;
@@ -1059,11 +1103,18 @@
                     <div  class="gift-item h-28 md:h-64 relative cursor-pointer perspective-1000 group" data-id="${gift.id}" data-special="${gift.special || false}">
                         <div class="card-inner w-full h-full transition-transform duration-1000 transform-style-3d">
                             <!-- LADO A -->
-                            <div class="card-front absolute inset-0 bg-white rounded-2xl shadow-lg border border-rose-100 flex flex-col items-center justify-center p-4 backface-hidden z-10">
-                                <div class="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-rose-100 transition-colors">
-                                    <i data-lucide="flower-2" class="w-8 h-8 text-rose-400 group-hover:text-rose-600"></i>
+                            <div class="card-front absolute inset-0 bg-white rounded-2xl shadow-lg border border-rose-100 flex flex-col items-center justify-center p-4 overflow-hidden backface-hidden z-10">
+                                <!-- 1. EL GRADIENTE GIRATORIO (LA LUZ) -->
+                                <!-- inset-[-100%] lo hace mucho más grande que la tarjeta para cubrir rotación -->
+                                <div class="absolute inset-[-100%] animate-[spin_4s_linear_infinite] 
+                                            bg-[conic-gradient(from_90deg_at_50%_50%,#ffffff_0%,#ffe4e6_50%,#be123c_100%)]">
                                 </div>
-                                <h4 class="font-love text-2xl text-rose-400">Flor #${index + 1}</h4>
+                                <div class="absolute inset-[3px] bg-white rounded-2xl flex flex-col items-center justify-center">
+                                  <div class="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-rose-100 transition-colors">
+                                      <i data-lucide="flower-2" class="w-8 h-8 text-rose-400 group-hover:text-rose-600"></i>
+                                  </div>
+                                  <h4 class="font-love text-2xl text-rose-400">Flor #${index + 1}</h4>
+                                </div>
                             </div>
                             <!-- LADO B -->
                             <div class="card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl shadow-xl flex flex-col items-center justify-center p-4 text-center text-white rotate-y-180 backface-hidden">
@@ -1078,36 +1129,10 @@
           $grid.append(html);
         });
         lucide.createIcons();
-        const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
+
         //sonidoBg.muted = true;
-        sonidoBg.play();
+
         sonidoBg.volume = 0.1;
-        const sonidoAudioSeccion1 = new Audio(
-          "./AudioVozSeccion1-enhanced-v2.wav",
-        );
-
-        const sonidoAudioSeccion2 = new Audio(
-          "./AudioVozSeccion2-enhanced-v2.wav",
-        );
-
-        const sonidoAudioSeccion3 = new Audio(
-          "./AudioVozSeccion3-enhanced-v2.wav",
-        );
-
-        const sonidoAudioSeccionFinal = new Audio(
-          "./AudioVozSeccionFinal-enhanced-v2.wav",
-        );
-
-        const sonidoA = new Audio("./freesound_community-swing-6045.mp3");
-        const sonidoArgentina = new Audio(
-          "./Por una Cabeza - Carlos Gardel.mp3",
-        );
-        const sonidoBrasil = new Audio(
-          "./Magalenha Sergio Mendes Letra Portugus_ Espaol.mp3",
-        );
-        const sonidoDedicado = new Audio(
-          "./Leo Dan - Pdeme la Luna _ Letra.mp3",
-        );
 
         sonidoAudioSeccion1.volume = 0.4;
         sonidoAudioSeccion2.volume = 0.4;
@@ -1115,7 +1140,11 @@
         sonidoAudioSeccionFinal.volume = 0.4;
         //  sonidoAudioSeccion1.volume = 0.4;
         //  sonidoAudioSeccion1.volume = 0.4;
-        sonidoAudioSeccion1.play();
+        $("#iniciarExperiencia").click(function () {
+          sonidoBg.play();
+          sonidoAudioSeccion1.play();
+          $("#iniciarExperiencia").remove();
+        });
 
         sonidoAudioSeccion1.addEventListener("ended", () => {
           $("#next-stage-btn").fadeIn();
@@ -1124,9 +1153,24 @@
         //const sonidoBg = new Audio("./Christina Perri - A Thousand Years.mp3");
         // Interacción Regalos
         let openedCount = 0;
+        let isCooldown = false;
         $(".gift-item").click(function () {
           sonidoA.currentTime = 0; // Reinicia el sonido para que pueda reproducirse rápidamente
           const $card = $(this);
+
+          // 1. EL GUARDIÁN: Si hay cooldown o ya está abierta, no hacemos nada
+          if (isCooldown || $card.hasClass("opened")) {
+            return;
+          }
+          isCooldown = true;
+
+          $(".gift-item")
+            .not($card)
+            .not(".opened")
+            .addClass(
+              "opacity-50 cursor-not-allowed scale-95 grayscale pointer-events-none transition-all duration-300",
+            );
+
           const $inner = $card.find(".card-inner");
 
           if (!$card.hasClass("opened")) {
@@ -1147,6 +1191,22 @@
           if (openedCount === gifts.length) {
             $("#next-stage-btn").fadeIn();
           }
+
+          // 4. TEMPORIZADOR (10 segundos)
+          setTimeout(() => {
+            isCooldown = false;
+
+            // Reactivar cartas
+            $(".gift-item").removeClass(
+              "opacity-50 cursor-not-allowed scale-95 grayscale pointer-events-none cursor-wait",
+            );
+            $("body").removeClass("cursor-wait");
+
+            // Verificar si terminamos
+            if (openedCount === gifts.length) {
+              $("#next-stage-btn").fadeIn();
+            }
+          }, 10000);
         });
 
         function unlockFlightStage() {
@@ -1199,11 +1259,12 @@
                   !animacionIniciada
                 ) {
                   setTimeout(
-                    startFlightAnimation(
-                      "airplane",
-                      "flight-status",
-                      "Argentina",
-                    ),
+                    () =>
+                      startFlightAnimation(
+                        "airplane",
+                        "flight-status",
+                        "Argentina",
+                      ),
                     500,
                   );
                   $(".map-container-arg").removeClass("hidden");
@@ -1235,7 +1296,8 @@
               });
 
               setTimeout(
-                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                () =>
+                  startFlightAnimation("airplane1", "flight-status1", "Brasil"),
                 500,
               );
               $(".map-container-bra").removeClass("hidden");
@@ -1250,7 +1312,8 @@
                 reproducirConFadeIn(sonidoBg, 0.1);
               });
               setTimeout(
-                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                () =>
+                  startFlightAnimation("airplane1", "flight-status1", "Brasil"),
                 500,
               );
             }
