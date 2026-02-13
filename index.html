@@ -1259,12 +1259,11 @@
                   !animacionIniciada
                 ) {
                   setTimeout(
-                    () =>
-                      startFlightAnimation(
-                        "airplane",
-                        "flight-status",
-                        "Argentina",
-                      ),
+                    startFlightAnimation(
+                      "airplane",
+                      "flight-status",
+                      "Argentina",
+                    ),
                     500,
                   );
                   $(".map-container-arg").removeClass("hidden");
@@ -1296,8 +1295,7 @@
               });
 
               setTimeout(
-                () =>
-                  startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
                 500,
               );
               $(".map-container-bra").removeClass("hidden");
@@ -1312,8 +1310,7 @@
                 reproducirConFadeIn(sonidoBg, 0.1);
               });
               setTimeout(
-                () =>
-                  startFlightAnimation("airplane1", "flight-status1", "Brasil"),
+                startFlightAnimation("airplane1", "flight-status1", "Brasil"),
                 500,
               );
             }
