@@ -1070,7 +1070,7 @@
               Nuestros Recuerdos
             </h3>
             <p class="text-rose-400 text-sm uppercase tracking-widest">
-              Toca una foto para leer la nota
+              Toque una foto para leer la nota
             </p>
           </div>
 
@@ -1103,7 +1103,7 @@
                       <p
                         class="font-handwriting text-xl text-center text-gray-600"
                       >
-                        Una noche mágica 
+                        Una noche mágica
                       </p>
                     </div>
                     <div
@@ -1113,7 +1113,9 @@
                         <p
                           class="font-handwriting text-1xl text-gray-800 leading-relaxed"
                         >
-                          "Aún recuerdo ese día como si fuera ayer tenia nervios de explorar un país nuevo, pero fue una noche increiblee y mucho más a su ladoo mi amor,"
+                          "Aún recuerdo ese día como si fuera ayer tenia nervios
+                          de explorar un país nuevo, pero fue una noche
+                          increiblee y mucho más a su ladoo mi amor,"
                         </p>
                         <div class="mt-4 text-rose-500 text-3xl">❤</div>
                       </div>
@@ -1192,8 +1194,9 @@
                         <p
                           class="font-handwriting text-1xl text-gray-800 leading-relaxed"
                         >
-                          "Gracias por iluminar mis días con tu alegría. Es mi
-                          sol. Me enseña a vivir las experiencia que no solo quedan en la mente sino también en el corazón"
+                          "Gracias por iluminar mis días con su alegría. Es mi
+                          sol. Me enseña a vivir las experiencia que no solo 
+                          quedan en la mente sino también en el corazón"
                         </p>
                         <div class="mt-4 text-rose-500 text-3xl">☀</div>
                       </div>
@@ -1232,7 +1235,10 @@
                         <p
                           class="font-handwriting text-1xl text-gray-800 leading-relaxed"
                         >
-                          "Amo esos momentos en los que nos reímos a carcajadas y volvemos a ser niños. Esa forma tan nuestra de consentirnos es lo que hace nuestra relación tan fuerte y especial."
+                          "Amo esos momentos en los que nos reímos a carcajadas
+                          y volvemos a ser niños. Esa forma tan nuestra de
+                          consentirnos es lo que hace nuestra relación tan
+                          fuerte y especial."
                         </p>
                         <div class="mt-4 text-rose-500 text-3xl">✶⋆.°</div>
                       </div>
@@ -1359,6 +1365,10 @@
 
       const sonidoAudioSeccion3 = new Audio(
         "./AudioVozSeccion3-enhanced-v2.wav",
+      );
+
+      const sonidoAudioSeccionRecuerdos = new Audio(
+        "./AudioVozSeccionRecuerso-mejorada-v2.wav",
       );
 
       const sonidoAudioSeccionFinal = new Audio(
@@ -1558,8 +1568,10 @@
             let animacionIniciada = false;
             let animacionIniciadaBra = false;
             if (currentStageEl.attr("id") === "stage-polaroids") {
-              // Aseguramos que el botón esté visible para continuar
-              $("#next-stage-btn").fadeIn();
+              sonidoAudioSeccionRecuerdos.play();
+              sonidoAudioSeccionRecuerdos.addEventListener("ended", () => {
+                $(this).fadeIn();
+              });
             }
             if (currentStageEl.attr("id") === "stage-flight") {
               pararConEstilo(sonidoBg);
