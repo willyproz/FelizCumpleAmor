@@ -64,7 +64,6 @@
         }
       }
 
- 
       /* Fondo fijo */
       .bg-romantic {
         background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
@@ -636,6 +635,68 @@
           opacity: 0;
         }
       }
+
+      /* --- NUEVOS ESTILOS POLAROID --- */
+
+      /* Fuente manuscrita para las notas */
+      @import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap");
+
+      .font-handwriting {
+        font-family: "Indie Flower", cursive;
+      }
+
+      /* Tarjeta estilo foto instantánea */
+      .polaroid-card {
+        background-color: white;
+        padding: 10px 10px 45px 10px; /* Borde inferior grueso */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      /* Reverso de la foto (Nota) */
+      .photo-back {
+        /*background-color: #fef3c7; 
+        background-image: linear-gradient(#f9f9f9 1px, transparent 1px);
+        background-size: 100% 20px; */
+        background-color: #fecdd3 !important; /* Rose-200 */
+        background-image: linear-gradient(
+          #ffffff 1px,
+          transparent 1px
+        ) !important; /* Líneas blancas */
+        background-size: 100% 25px !important; /* Espaciado de renglones */
+        color: #881337 !important; /* Texto Rose-900 para contraste */
+        padding: 20px;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* Scrollbar invisible pero funcional */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Rotaciones aleatorias para realismo */
+      .rotate-left-2 {
+        transform: rotate(-2deg);
+      }
+      .rotate-right-3 {
+        transform: rotate(3deg);
+      }
+      .rotate-left-1 {
+        transform: rotate(-1deg);
+      }
+      .rotate-right-2 {
+        transform: rotate(2deg);
+      }
     </style>
   </head>
   <body class="text-rose-900 selection:bg-rose-200">
@@ -993,6 +1054,197 @@
         </div>
       </section>
 
+      <!-- 4. NUEVA SECCIÓN: RECUERDOS TIPO POLAROID (CON SCROLL) -->
+      <section
+        class="h-screen w-full relative overflow-hidden stage"
+        id="stage-polaroids"
+      >
+        <div class="h-full w-full flex flex-col pt-10">
+          <!-- HEADER FIJO (Siempre visible) -->
+          <div
+            class="flex-none z-30 text-center pb-4 px-4 bg-gradient-to-b to-transparent backdrop-blur-sm"
+          >
+            <h3
+              class="font-love text-5xl md:text-6xl text-rose-800 mb-2 drop-shadow-sm"
+            >
+              Nuestros Recuerdos
+            </h3>
+            <p class="text-rose-400 text-sm uppercase tracking-widest">
+              Toca una foto para leer la nota
+            </p>
+          </div>
+
+          <!-- CONTENIDO SCROLLABLE (Donde están las fotos) -->
+          <div
+            class="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 pb-20 no-scrollbar"
+          >
+            <div class="container mx-auto max-w-6xl">
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center py-8"
+              >
+                <!-- FOTO 1 -->
+                <div
+                  class="polaroid-item w-64 h-80 relative cursor-pointer perspective-1000 group rotate-left-2"
+                >
+                  <div
+                    class="card-inner w-full h-full transition-transform duration-700 transform-style-3d"
+                  >
+                    <div
+                      class="card-front polaroid-card absolute inset-0 backface-hidden z-10 flex flex-col"
+                    >
+                      <div
+                        class="flex-grow bg-gray-100 overflow-hidden relative mb-4"
+                      >
+                        <img
+                          src="./Foto1.png"
+                          class="w-full h-full object-cover transition-all duration-500"
+                        />
+                      </div>
+                      <p
+                        class="font-handwriting text-xl text-center text-gray-600"
+                      >
+                        Una noche mágica 
+                      </p>
+                    </div>
+                    <div
+                      class="card-back photo-back absolute inset-0 backface-hidden z-20"
+                    >
+                      <div>
+                        <p
+                          class="font-handwriting text-1xl text-gray-800 leading-relaxed"
+                        >
+                          "Aún recuerdo ese día como si fuera ayer tenia nervios de explorar un país nuevo, pero fue una noche increiblee y mucho más a su ladoo mi amor,"
+                        </p>
+                        <div class="mt-4 text-rose-500 text-3xl">❤</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FOTO 2 -->
+                <div
+                  class="polaroid-item w-64 h-80 relative cursor-pointer perspective-1000 group rotate-right-3"
+                >
+                  <div
+                    class="card-inner w-full h-full transition-transform duration-700 transform-style-3d"
+                  >
+                    <div
+                      class="card-front polaroid-card absolute inset-0 backface-hidden z-10 flex flex-col"
+                    >
+                      <div
+                        class="flex-grow bg-gray-100 overflow-hidden relative mb-4"
+                      >
+                        <img
+                          src="./Foto2.png"
+                          class="w-full h-full object-cover transition-all duration-500"
+                        />
+                      </div>
+                      <p
+                        class="font-handwriting text-xl text-center text-gray-600"
+                      >
+                        Ese viaje juntos
+                      </p>
+                    </div>
+                    <div
+                      class="card-back photo-back absolute inset-0 backface-hidden z-20"
+                    >
+                      <div>
+                        <p
+                          class="font-handwriting text-1xl text-gray-800 leading-relaxed"
+                        >
+                          "No importa el destino, mi lugar favorito siempre es a
+                          su lado y juntos comiendo rico :) "
+                        </p>
+                        <div class="mt-4 text-rose-500 text-3xl">✈</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FOTO 3 -->
+                <div
+                  class="polaroid-item w-64 h-80 relative cursor-pointer perspective-1000 group rotate-left-1"
+                >
+                  <div
+                    class="card-inner w-full h-full transition-transform duration-700 transform-style-3d"
+                  >
+                    <div
+                      class="card-front polaroid-card absolute inset-0 backface-hidden z-10 flex flex-col"
+                    >
+                      <div
+                        class="flex-grow bg-gray-100 overflow-hidden relative mb-4"
+                      >
+                        <img
+                          src="./Foto3.png"
+                          class="w-full h-full object-cover transition-all duration-500"
+                        />
+                      </div>
+                      <p
+                        class="font-handwriting text-xl text-center text-gray-600"
+                      >
+                        Simplemente tú
+                      </p>
+                    </div>
+                    <div
+                      class="card-back photo-back absolute inset-0 backface-hidden z-20"
+                    >
+                      <div>
+                        <p
+                          class="font-handwriting text-1xl text-gray-800 leading-relaxed"
+                        >
+                          "Gracias por iluminar mis días con tu alegría. Es mi
+                          sol. Me enseña a vivir las experiencia que no solo quedan en la mente sino también en el corazón"
+                        </p>
+                        <div class="mt-4 text-rose-500 text-3xl">☀</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FOTO 4 -->
+                <div
+                  class="polaroid-item w-64 h-80 relative cursor-pointer perspective-1000 group rotate-right-2"
+                >
+                  <div
+                    class="card-inner w-full h-full transition-transform duration-700 transform-style-3d"
+                  >
+                    <div
+                      class="card-front polaroid-card absolute inset-0 backface-hidden z-10 flex flex-col"
+                    >
+                      <div
+                        class="flex-grow bg-gray-100 overflow-hidden relative mb-4"
+                      >
+                        <img
+                          src="./Foto4.png"
+                          class="w-full h-full object-cover transition-all duration-500"
+                        />
+                      </div>
+                      <p
+                        class="font-handwriting text-xl text-center text-gray-600"
+                      >
+                        En Algún Lugar
+                      </p>
+                    </div>
+                    <div
+                      class="card-back photo-back absolute inset-0 backface-hidden z-20"
+                    >
+                      <div>
+                        <p
+                          class="font-handwriting text-1xl text-gray-800 leading-relaxed"
+                        >
+                          "Amo esos momentos en los que nos reímos a carcajadas y volvemos a ser niños. Esa forma tan nuestra de consentirnos es lo que hace nuestra relación tan fuerte y especial."
+                        </p>
+                        <div class="mt-4 text-rose-500 text-3xl">✶⋆.°</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 4. RECUERDO (FOTO) -->
       <section
         class="min-h-screen w-full flex flex-col justify-center items-center py-10 stage relative overflow-hidden"
@@ -1063,7 +1315,7 @@
       let esModoBrasil = false;
 
       let currentStage = 0;
-      let totalStages = 6; // Inicialmente 5
+      let totalStages = 7; // Inicialmente 5
       let flightUnlocked = false;
 
       // --- DATOS DE LOS REGALOS ---
@@ -1125,6 +1377,15 @@
         $("#scroll-container").css("transform", `translateY(0vh) !important`);
 
         lucide.createIcons();
+        $(".polaroid-item").click(function () {
+          // Girar la tarjeta al hacer clic
+          $(this).find(".card-inner").toggleClass("rotate-y-180");
+
+          // Sonido suave de papel (usamos el mismo que las cartas)
+          sonidoA.currentTime = 0;
+          sonidoA.volume = 0.1;
+          sonidoA.play();
+        });
 
         // 1. GENERAR REGALOS
         const $grid = $("#gift-grid");
@@ -1296,7 +1557,10 @@
             const tiempoDespegue = 4;
             let animacionIniciada = false;
             let animacionIniciadaBra = false;
-
+            if (currentStageEl.attr("id") === "stage-polaroids") {
+              // Aseguramos que el botón esté visible para continuar
+              $("#next-stage-btn").fadeIn();
+            }
             if (currentStageEl.attr("id") === "stage-flight") {
               pararConEstilo(sonidoBg);
               //  centinela = false;
@@ -1520,7 +1784,7 @@
               plane.style.top = `${percentY}%`;
               plane.style.transform = `translate(-50%, -50%) rotate(${angle + 45}deg)`;
 
-              $("#" + status).text("¡Llegamos! Bienvenidos a " + pais);
+              $("#" + status).text("¡Llegamos! Bienvenida a " + pais);
               $("#flight-instucciones-" + pais).removeClass("hidden");
               // Revelar llegada
               if (avion == "airplane") {
